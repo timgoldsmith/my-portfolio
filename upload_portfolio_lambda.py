@@ -10,12 +10,11 @@ def lambda_handler(event, context):
     build_bucket = s3.Bucket('build.porfolio.mathisonit.co.uk')
     portfolio_bucket = s3.Bucket('portfolio.mathisonit.co.uk')
 
-    portfolio_zip = StringIO.StringIO()
-    build_bucket.download_fileobj('Portfoliobuild.zip', portfolio_zip)
+    build_bucket.download_file('Portfoliobuild.zip', 'C:\\temp\\Portfoliobuild.zip')
 
-
-    with zipfile.ZipFile(portfolio_zip) as myzip:
+    with zipfile.ZipFile('C:\\temp\\Portfoliobuild.zip') as myzip:
         for nm in myzip.namelist():
+            #print nm
             obj = myzip.open(nm)
             portfolio_bucket.upload_fileobj(obj, nm, ExtraArgs={'ContentType':mimetypes.guess_type(nm)[0]})
             portfolio_bucket.Object(nm).Acl().put(ACL='public-read')
